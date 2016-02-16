@@ -1,16 +1,21 @@
 require 'pry'
 class Robot  
+  @@all = []
+  @@count = 0
   X = 0
   Y = 1
   DEFAULT_ATTACK = 5
   DEFAULT_RANGE = 1
-attr_reader :item, :wound, :health
-attr_accessor :equipped_weapon 
+attr_reader :items, :wound, :health
+attr_accessor :equipped_weapon, :shields
 
   def initialize
+    @health = 100
+    @shields = 50
     @position = [0,0]
     @items = []
-    @health = 100
+    @@all << self
+    @@count += 1
   end
 
 
@@ -21,7 +26,33 @@ attr_accessor :equipped_weapon
 
   # def equipped_weapon
   #   @equipped_weapon
-  # end
+  # # end
+
+  #calling robot.position ... duh
+
+  def scan
+    robotlist = @@all
+    robotlist.select {|robot| robot.position == [@position[X]+1, @position[Y]]}
+    robotlist.select {|robot| robot.position == [@position[X]-1,@position[Y]]}
+    robotlist.select {|robot| robot.position == [@position[X],@position[Y]+1]}
+    robotlist.select {|robot| robot.position == [@position[X],@position[Y]-1]}
+  end
+
+
+  def self.in_position(x,y)
+    robotlist = @@all
+    robotlist.select {|robot| robot.position == [x,y]}
+  end
+
+  def self.all
+    @@all
+  end
+
+  def self.count
+    @@count
+  end
+
+
   def range(enemy)
     dx = (position[X] - enemy.position[X]).abs
     dy = (position[Y] - enemy.position[Y]).abs
@@ -51,9 +82,20 @@ attr_accessor :equipped_weapon
     end
   end
 
+  #normal way damage is calculated
+  #if dmg is more than shield amount then the remaining dmg
+  #goes through to health
   def wound(damage)
-    @health -= damage
-    if @health < 0
+    remaindmg = damage-@shields
+    if damage > @shields
+      @shields = 0
+      @health -= remaindmg 
+    elsif @shields >= damage
+      @shields -= damage
+    else
+      @health -= damage
+    end
+    if @health <= 0
       @health = 0
     end
   end
@@ -72,13 +114,14 @@ attr_accessor :equipped_weapon
   end
   
   def pick_up(item)
-      if item.is_a?Weapon
-        @equipped_weapon = item
-      elsif item.is_a?(BoxOfBolts) && health <= 80
-        item.feed(self)
-      elsif items_weight + item.weight <= 250
-        @items << item
-      end
+    if item.is_a?Weapon
+      @equipped_weapon = item
+    elsif item.is_a?(BoxOfBolts) && health <= 80
+      item.feed(self)
+    elsif
+      items_weight + item.weight <= 250
+      @items << item
+    end
   end
  
   def position

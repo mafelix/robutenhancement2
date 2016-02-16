@@ -9,7 +9,7 @@ describe Robot do
     expect(@robot.equipped_weapon).to be_nil
     end
     it "sets equipped weapon" do
-      weapon = Laser.new
+      weapon = Laser.new 
 
       @robot.equipped_weapon = weapon
       expect(@robot.equipped_weapon).to eq(weapon)
@@ -24,9 +24,9 @@ describe Robot do
 
     it "uses the equipped weapon in attack" do
       @robot.equipped_weapon = @weapon
-
       expect(@weapon).to receive(:hit).with(@robot2)
       @robot.attack(@robot2)
+      
     end
   end
 end

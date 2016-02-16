@@ -12,12 +12,12 @@ describe Robot do
   end
 
   describe "#wound" do
-    it "decreases health" do
+    it "decreases shields before health" do
       @robot.wound(20)
-      expect(@robot.health).to eq(80)
+      expect(@robot.shields).to eq(30)
     end
 
-    it "doesn't decrease health below 0" do
+    it "damage bleeds through shields to health if dmg > shields" do
       @robot.wound(150)
       expect(@robot.health).to eq(0)
     end
@@ -25,6 +25,7 @@ describe Robot do
 
   describe "#heal" do
     it "increases health" do
+      @robot.shields = 0
       @robot.wound(40)
       @robot.heal(20)
       expect(@robot.health).to eq(80)

@@ -1,3 +1,4 @@
+require 'pry'
 class Weapon < Item
   attr_reader :damage, :name, :weight
   
@@ -8,8 +9,8 @@ class Weapon < Item
   end
 
   def hit(enemy)
-    enemy.wound(damage)
+      enemy.wound(damage)
   end  
 
 
-end
+end 
